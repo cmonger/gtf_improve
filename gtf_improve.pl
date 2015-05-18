@@ -92,10 +92,10 @@ foreach (@gtf)
 		if (exists $ids->{"$gene_id"}) #This line works, and they do exist
 			{
 			chomp $_;
-			print "$_ gene_name \"".$ids->{"$gene_id"}->{"genename1"}."\";\n"; #this works
+			print "$_"."gene_name \"".$ids->{"$gene_id"}->{"genename1"}."\";\n"; #this works
 			}
-
-		}	
+		else {print $_};
+		}
 	}	 
 
 

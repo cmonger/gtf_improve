@@ -1,11 +1,13 @@
 #!/usr/bin/perl;
-use warnings;
+#use warnings;
 
 #Perl script for combining the results of blastp on swissprot with the output of transdecoder using cufflinks input
 #This allows retention of swissprot ids and gene names for better annotation
 #craig monger 7/12/2015
 
 #Usage ./annotateTransDecoderGffWithSp.pl threshold(INT) blast_outfmt6 transdecodergff > outfilename.gff
+#E.G. perl annotateTransDecoderGffWithSp.perl 60 sp_blastp.outfmt6 transcripts.fasta.transdecoder.genome.gff3
+
 
 #taking command line input variables
 $threshold = shift;
@@ -43,9 +45,60 @@ foreach (@blastIn)
 				   }
 		}
 	}
-		
-foreach (keys %$tidDatabase)
+	
+#foreach (keys %$tidDatabase) #database debug test	
+#		{
+#		print $tidDatabase->{$_}->{"spid"}."\t".$tidDatabase->{$_}->{"name"}."\n" ;
+#		} 
+
+
+# Parse the gff file
+
+foreach $line (@gffIn)
+	{
+        my @column = split( /\s+/, $line );
+	if ($column[2] eq 'gene')
 		{
-		print $tidDatabase->{$_}->{"spid"}."\t".$tidDatabase->{$_}->{"name"}."\n" ;
-		} 
-# Read in the gff file
+		if ($line =~ /(\S+\t\S+\t\S+\t\S+\t\S+\t.\t.\t.\tID=\S+|.+;Name=)/)
+			{
+			$trimorf = $1 ;
+			$ninth = $column[8];
+			@splitter2 = split(/\|/, $ninth);
+			$id = $splitter2[0];
+			$id =~ s/ID=//g;
+			chomp $id;
+			print $trimorf.$tidDatabase->{$id}->{"name"}.";Dbxref=".$tidDatabase->{$id}->{"spid"}.";\n";
+			}
+		}
+	elsif ($column[2] eq 'mRNA')
+		{
+		if ($line =~ /(\S+\t\S+\t\S+\t\S+\t\S+\t.\t.\t.\tID=\S+|.+;Name=)/)
+			{
+			$trimorf = $1 ;
+			$ninth = $column[8];
+			@splitter2 = split(/\|/, $ninth);
+			$id = $splitter2[0];
+			$id =~ s/ID=//g;
+			chomp $id;
+			print $trimorf.$tidDatabase->{$id}->{"name"}.";Dbxref=".$tidDatabase->{$id}->{"spid"}.";\n";
+			}
+		}
+	else { print $line;}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

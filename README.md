@@ -12,3 +12,7 @@
 3) Perform local blast on nt database with ' -max_target_seqs 1 -outfmt '7seqid stitle''<br>
 4) Run the Parsegenes.pl script on blast output to extract gene names<br>
 5) Parse this and append the gene names to the gtf with gtf_improve.pl<br>
+
+#Count the unique genes from annotateTransDecoderGffWithSp.pl
+grep gene annotatedTranscripts95.gff3 | grep -v 'Name=;' | awk {'print $9 '} | sed -e 's/.*Name=\(.*\);D.*/\1/' |sort -u |wc -l
+
